@@ -5,7 +5,7 @@ import hygrid.agent.AbstractIOReal;
 import hygrid.agent.AbstractIOSimulated;
 import hygrid.agent.AbstractInternalDataModel;
 
-public class GroupCoordinatorAgent extends AbstractEnergyAgent {
+public class DomesticLoadCoordinatorAgent extends AbstractEnergyAgent {
 
 	/**
 	 * 
