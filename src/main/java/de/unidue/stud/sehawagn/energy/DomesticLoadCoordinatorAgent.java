@@ -1,33 +1,17 @@
 package de.unidue.stud.sehawagn.energy;
 
-import hygrid.agent.AbstractEnergyAgent;
-import hygrid.agent.AbstractIOReal;
-import hygrid.agent.AbstractIOSimulated;
-import hygrid.agent.AbstractInternalDataModel;
+import jade.core.Agent;
 
-public class DomesticLoadCoordinatorAgent extends AbstractEnergyAgent {
+public class DomesticLoadCoordinatorAgent extends Agent {
 
+	public static String AGENT_ID= "DoLoCoAg";
+	public static String CONVERSATION_ID_REQUEST_SCHEDULE="request-run-schedule";
+	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -4265865470470961177L;
 
-	@Override
-	public AbstractIOReal getIOReal() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	@Override
-	public AbstractIOSimulated getIOSimulated() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public AbstractInternalDataModel getInternalDataModel() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }
