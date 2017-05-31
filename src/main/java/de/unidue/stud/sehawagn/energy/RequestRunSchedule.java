@@ -2,38 +2,54 @@ package de.unidue.stud.sehawagn.energy;
 
 import java.io.Serializable;
 
+import energy.optionModel.TechnicalSystem;
 import jade.core.Agent;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
 import jade.proto.AchieveREInitiator;
 
 public class RequestRunSchedule extends AchieveREInitiator {
 
-	private MessageTemplate messageTemplate;
+	private static MessageTemplate messageTemplate;
 
-	public RequestRunSchedule(Agent a, Serializable content) {
-		this(a, prepareRequestMessage(a,content));
-		// TODO Auto-generated constructor stub
-	}
-	
 	public RequestRunSchedule(Agent a, ACLMessage msg) {
 		super(a, msg);
 	}
-	
-	public static ACLMessage prepareRequestMessage(Agent a, Serializable content){
-		ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
+
+	public static ACLMessage prepareRequestMessage(Agent a, Serializable content) {
+		ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
 		Helper.fillMessage(msg, content, a);
 		msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+
+		System.out.println("RequestRunSchedule from Domestic Load Coordinator Agent ");
+
 		return msg;
 	}
-	
-	private MessageTemplate getMessageTemplate(){
-		if(messageTemplate == null){
-			messageTemplate = MessageTemplate.MatchConversationId(DomesticLoadCoordinatorAgent.CONVERSATION_ID_REQUEST_SCHEDULE);
-			messageTemplate = MessageTemplate.and(messageTemplate, MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST));
+
+	protected void handleInform(ACLMessage inform) {
+		System.out.println("Handling INFORM from " + inform.getSender().getName() + " requested Run Schedule should have been received");
+		try {
+			Serializable contentObject = inform.getContentObject();
+			if (contentObject instanceof TechnicalSystem) {
+				TechnicalSystem technicalSystem = (TechnicalSystem) contentObject;
+				System.out.println("technicalSystem.getSystemID(): " + technicalSystem.getSystemID());
+
+				technicalSystem.getSystemID();
+			}
+		} catch (UnreadableException e) {
+			e.printStackTrace();
 		}
-		return this.messageTemplate;
+
+	}
+
+	public static MessageTemplate getMessageTemplate() {
+		if (messageTemplate == null) {
+			messageTemplate = MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+//			messageTemplate = MessageTemplate.and(messageTemplate, MessageTemplate.MatchConversationId(DomesticLoadCoordinatorAgent.CONVERSATION_ID_REQUEST_SCHEDULE));
+		}
+		return messageTemplate;
 	}
 
 	/**

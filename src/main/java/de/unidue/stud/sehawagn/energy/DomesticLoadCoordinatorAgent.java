@@ -12,6 +12,11 @@ public class DomesticLoadCoordinatorAgent extends Agent {
 	 */
 	private static final long serialVersionUID = -4265865470470961177L;
 
-
+	@Override
+	protected void setup() {
+		super.setup();
+		Helper.enableForCommunication(this);
+		addBehaviour(new ProvideRunSchedule(this, RequestRunSchedule.getMessageTemplate()));
+	}
 
 }
