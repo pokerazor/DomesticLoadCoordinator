@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Vector;
 
-import energy.optionModel.TechnicalSystem;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.FIPANames;
@@ -17,9 +16,11 @@ import jade.util.leap.Iterator;
 public class RequestRunSchedule extends AchieveREInitiator {
 
 	private static MessageTemplate messageTemplate;
+	private ScheduleRequester requester;
 
-	public RequestRunSchedule(Agent a, ACLMessage msg) {
+	public RequestRunSchedule(Agent a, ACLMessage msg, ScheduleRequester requester) {
 		super(a, msg);
+		this.requester=requester;
 		Iterator receivers = msg.getAllIntendedReceiver();
 		while (receivers.hasNext()) {
 			AID recvAID = (AID) receivers.next();
@@ -61,11 +62,11 @@ public class RequestRunSchedule extends AchieveREInitiator {
 		System.out.println("Handling INFORM from " + inform.getSender().getName() + " requested Run Schedule should have been received");
 		try {
 			Serializable contentObject = inform.getContentObject();
-			if (contentObject instanceof TechnicalSystem) {
-				TechnicalSystem technicalSystem = (TechnicalSystem) contentObject;
+			if (contentObject instanceof Flexibility) {
+				Flexibility technicalSystem = (Flexibility) contentObject;
 				System.out.println("technicalSystem.getSystemID(): " + technicalSystem.getSystemID());
 
-				technicalSystem.getSystemID();
+				requester.processReceivedSchedule(technicalSystem);
 			}
 		} catch (UnreadableException e) {
 			e.printStackTrace();
