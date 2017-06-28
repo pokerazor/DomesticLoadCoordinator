@@ -50,16 +50,20 @@ public class Flexibility extends TechnicalSystem {
 
 			// iterate over all states
 			for (State state : states) {
-				Boolean keepState = false;
+				Boolean controllable = false;
+				Boolean switchable = false;
 
 				List<VariableState> allVariables = state.getStateEvaluationRanges();
 				for (VariableState curVariable : allVariables) {
-					if (checkVariable(curVariable, variableControllable, false) && checkVariable(curVariable, variableOn, true)) {
-						// this state is controllable by the system
-						keepState = true;
+					if (!controllable && checkVariable(curVariable, variableControllable, false)) {
+						controllable = true;
+					}
+					if (!switchable && checkVariable(curVariable, variableOn, true)) {
+						switchable = true;
 					}
 				}
-				if (!keepState) {
+				if (!controllable || !switchable) {
+					// this state is controllable by the system
 					removeStates.add(state);
 				}
 			}
@@ -72,7 +76,7 @@ public class Flexibility extends TechnicalSystem {
 		if (curVariable.getVariableID().equals(variableName)) {
 			if (curVariable instanceof FixedBoolean) {
 				FixedBoolean variable = (FixedBoolean) curVariable;
-				return variable.isValue() && !invert;  // e.g. true && !true (invert) =>> false; true && !false (don't invert) =>> true
+				return variable.isValue() != invert;
 			}
 		}
 		return false;
@@ -81,13 +85,13 @@ public class Flexibility extends TechnicalSystem {
 	public Flexibility setStaticPhasePauses(Integer pauseSeconds) {
 		// iterate over all (remaining) states
 		for (State state : states) {
-			System.out.println(state.getStateID() + " duration before: " + state.getDuration());
+//			System.out.println(state.getStateID() + " duration before: " + state.getDuration().getValue() + state.getDuration().getUnit());
 
 			// set new wait/pause time
 			state.getDuration().setValue(pauseSeconds);
 			state.getDuration().setUnit(TimeUnit.SECOND_S);
 
-			System.out.println(state.getStateID() + " duration after: " + state.getDuration());
+//			System.out.println(state.getStateID() + " duration after: " + state.getDuration().getValue() + state.getDuration().getUnit());
 
 			/*
 			List<StateTransition> transitions = state.getStateTransitions();
@@ -105,9 +109,9 @@ public class Flexibility extends TechnicalSystem {
 		return this;
 
 	}
-	
-	public static HashMap<String,Duration> deriveDurations(List<State> allStates){
-		HashMap<String,Duration> allDurations = new HashMap<String,Duration>();
+
+	public static HashMap<String, Duration> deriveDurations(List<State> allStates) {
+		HashMap<String, Duration> allDurations = new HashMap<String, Duration>();
 		for (State state : allStates) {
 			allDurations.put(state.getStateID(), state.getDuration());
 		}
@@ -117,10 +121,10 @@ public class Flexibility extends TechnicalSystem {
 	public void applyTo(TechnicalSystem originalSystem, int interfaceID) {
 		List<State> originalStates = findInterface(originalSystem.getInterfaceConfigurations(), interfaceID).getSystemStates();
 		List<State> processedStates = findInterface(interfaceConfigurations, 0).getSystemStates();
-		HashMap<String,Duration> allDurations = deriveDurations(processedStates);
+		HashMap<String, Duration> allDurations = deriveDurations(processedStates);
 		for (State state : originalStates) {
 			Duration foundDuration = allDurations.get(state.getStateID());
-			if(foundDuration!=null){
+			if (foundDuration != null) {
 				state.setDuration(foundDuration);
 			}
 		}

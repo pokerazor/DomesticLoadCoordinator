@@ -21,7 +21,7 @@ public class ProvideRunSchedule extends AchieveREResponder {
 	}
 
 	protected ACLMessage prepareResponse(ACLMessage request) {
-		System.out.println("Agent " + myAgent.getLocalName() + ": REQUEST to provide a run schedule received from " + request.getSender().getName());
+//		System.out.println("Agent " + myAgent.getLocalName() + ": REQUEST to provide a run schedule received from " + request.getSender().getName());
 		// We agree to perform the action. Note that in the FIPA-Request
 		// protocol the AGREE message is optional. Return null if you
 		// don't want to send it.
@@ -33,13 +33,13 @@ public class ProvideRunSchedule extends AchieveREResponder {
 	}
 
 	protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response) {
-		System.out.println("Agent " + myAgent.getLocalName() + ": computing and providing run schedule.");
+//		System.out.println("Agent " + myAgent.getLocalName() + ": computing and providing run schedule.");
 		ACLMessage inform = request.createReply();
 		try {
 			Serializable contentObject = request.getContentObject();
 			if (contentObject instanceof Flexibility) {
 				Flexibility flexibility = (Flexibility) contentObject;
-				System.out.println("technicalSystem.getSystemID(): " + flexibility.getSystemID());
+//				System.out.println("technicalSystem.getSystemID(): " + flexibility.getSystemID());
 				inform.setPerformative(ACLMessage.INFORM);
 				try {
 					flexibility.setStaticPhasePauses(60);
